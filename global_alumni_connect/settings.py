@@ -144,5 +144,5 @@ EMAIL_HOST_PASSWORD = '###################'  # Add your Gmail app password here
 DEFAULT_FROM_EMAIL = '###########################'  # Add your Gmail address here
 
 # reCAPTCHA Configuration
-RECAPTCHA_SITE_KEY = '6LdEEFArAAAAAOJgIJqdd9-dXFYZo8NRG5LDhKFw'  # Replace with your reCAPTCHA site key
-RECAPTCHA_SECRET_KEY = '6LdEEFArAAAAAGR8gw2BVNZfOHzfDCbJ7kS-7V1F'  # Replace with your reCAPTCHA secret key
+RECAPTCHA_SITE_KEY = '######################################'  # Replace with your reCAPTCHA site key
+RECAPTCHA_SECRET_KEY = '####################################'  # Replace with your reCAPTCHA secret key
