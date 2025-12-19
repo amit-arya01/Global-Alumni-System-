@@ -139,9 +139,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'softpro.amitkumar@gmail.com'  # Add your Gmail address here
-EMAIL_HOST_PASSWORD = 'lafw jkyv hwsc vtok'  # Add your Gmail app password here
-DEFAULT_FROM_EMAIL = 'softpro.amitkumar@gmail.com'  # Add your Gmail address here
+EMAIL_HOST_USER = '#########################'  # Add your Gmail address here
+EMAIL_HOST_PASSWORD = '###################'  # Add your Gmail app password here
+DEFAULT_FROM_EMAIL = '###########################'  # Add your Gmail address here
 
 # reCAPTCHA Configuration
 RECAPTCHA_SITE_KEY = '6LdEEFArAAAAAOJgIJqdd9-dXFYZo8NRG5LDhKFw'  # Replace with your reCAPTCHA site key
