@@ -1,0 +1,419 @@
+{% extends 'alumni_app/inbox_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4    ">
+    <div class="row pt-5">
+        <!-- Left Sidebar - Alumni List -->
+        <div class="col-12 col-md-4 border-end p-0 mb-3 mb-md-0">
+            <div class="card h-100 rounded-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Messages</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="chat-list" style="height: calc(100vh - 250px); overflow-y: auto;">
+                        {% if chat_list %}
+                            {% for chat in chat_list %}
+                                <a href="{% url 'inbox' %}?room={{ chat.room.id }}" class="text-decoration-none chat-list-item" data-room-id="{{ chat.room.id }}">
+                                    <div class="p-3 border-bottom {% if chat.unread_count > 0 %}bg-light{% endif %}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                {% if chat.other_participant.profile_pic %}
+                                                    <img src="{{ chat.other_participant.profile_pic.url }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{% static 'images/default_profile.png' %}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% endif %}
+                                                <div>
+                                                    <h5 class="mb-1 text-dark">{{ chat.other_participant.first_name }} {{ chat.other_participant.last_name }}</h5>
+                                                    {% if chat.last_message %}
+                                                        <p class="mb-0 text-muted small">
+                                                            {% if chat.last_message.sender == request.user %}
+                                                                You: 
+                                                            {% endif %}
+                                                            {{ chat.last_message.content|truncatechars:50 }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                {% if chat.last_message %}
+                                                    <small class="text-muted">{{ chat.last_message.timestamp|date:"M d, H:i" }}</small>
+                                                {% endif %}
+                                                {% if chat.unread_count > 0 %}
+                                                    <span class="badge bg-primary rounded-pill ms-2">{{ chat.unread_count }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center p-4">
+                                <p class="text-muted">No messages yet. Start a conversation with your connections!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Chat Room -->
+        <div class="col-12 col-md-8 p-0">
+            <div class="card h-100 rounded-0">
+                <div id="chat-room-container">
+                    {% if request.GET.room %}
+                      
+                    {% else %}
+                        <div class="text-center p-5">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">Select a chat to start messaging</h4>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-list-item {
+    transition: background-color 0.2s;
+}
+
+.chat-list-item:hover {
+    background-color: #f8f9fa;
+}
+
+.chat-list-item.active {
+    background-color: #e9ecef;
+}
+
+.message-wrapper {
+    margin-bottom: 1rem;
+}
+
+.message {
+    max-width: 10%;
+    padding: 0.75rem;
+    border-radius: 1rem;
+}
+
+.message.sent {
+  
+    color: white;
+    margin-left: auto;
+}
+
+.message.received {
+    background-color: #f8f9fa;
+    margin-right: auto;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.chat-input {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+    background-color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0;
+        margin: 0;
+    }
+
+    .row {
+        margin: 0;
+        padding: 0;
+    }
+
+    .col-12 {
+        margin-bottom: 1rem;
+    }
+
+    .chat-list {
+        height: calc(50vh - 60px) !important;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Custom Scrollbar */
+.chat-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.chat-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.card-body {
+    background-color: #fff;
+}
+
+/* Chat List Item Styles */
+.chat-list-item {
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.chat-list-item:last-child {
+    border-bottom: none;
+}
+
+.chat-list-item:hover {
+    background-color: #f8f9fa;
+}
+
+.chat-list-item.active {
+    background-color: #e9ecef;
+}
+
+/* Message Styles */
+.message {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message.sent {
+  
+    color: white;
+}
+
+.message.received {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Input Styles */
+.chat-input {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.chat-input input {
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 8px 15px;
+}
+
+.chat-input button {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatListItems = document.querySelectorAll('.chat-list-item');
+    const chatRoomContainer = document.getElementById('chat-room-container');
+    
+    // Function to load chat room
+    function loadChatRoom(roomId) {
+        fetch(`/chat/${roomId}/`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const chatRoomContent = doc.querySelector('.card');
+                chatRoomContainer.innerHTML = chatRoomContent.innerHTML;
+                
+                // Initialize chat room functionality
+                initializeChatRoom(roomId);
+            })
+            .catch(error => console.error('Error loading chat room:', error));
+    }
+    
+    // Function to initialize chat room functionality
+    function initializeChatRoom(roomId) {
+        const messageForm = document.getElementById('message-form');
+        const chatMessages = document.getElementById('chat-messages');
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+        
+        if (messageForm) {
+            messageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendMessage(messageForm, chatMessages);
+            });
+        }
+        
+        if (clearChatBtn) {
+            clearChatBtn.addEventListener('click', function() {
+                clearChat(roomId, chatMessages);
+            });
+        }
+        
+        // Auto-refresh messages
+        setInterval(() => refreshMessages(roomId, chatMessages), 1000 );
+    }
+    
+    // Function to send message
+    function sendMessage(form, chatMessages) {
+        const formData = new FormData(form);
+        
+        fetch('/send-message/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                appendMessage(data.message, chatMessages);
+                form.reset();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the message.');
+        });
+    }
+    
+    // Function to append new message
+    function appendMessage(message, chatMessages) {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = 'message-wrapper mb-3 text-end';
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message sent';
+        messageDiv.innerHTML = `
+            ${message.content}
+            <div class="message-time">
+                ${message.timestamp}
+                <i class="fas fa-check"></i>
+            </div>
+        `;
+        
+        messageWrapper.appendChild(messageDiv);
+        chatMessages.appendChild(messageWrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Function to refresh messages
+    function refreshMessages(roomId, chatMessages) {
+        fetch(`/chat/${roomId}/`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newMessages = doc.getElementById('chat-messages').innerHTML;
+                if (newMessages !== chatMessages.innerHTML) {
+                    chatMessages.innerHTML = newMessages;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            })
+            .catch(error => console.error('Error refreshing messages:', error));
+    }
+    
+    // Function to clear chat
+    function clearChat(roomId, chatMessages) {
+        if (confirm('Are you sure you want to clear this chat? This action cannot be undone.')) {
+            fetch(`/clear-chat/${roomId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chatMessages.innerHTML = '';
+                } else {
+                    alert(data.message || 'An error occurred while clearing the chat.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while clearing the chat.');
+            });
+        }
+    }
+    
+    // Add click event listeners to chat list items
+    chatListItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const roomId = this.dataset.roomId;
+            
+            // Update active state
+            chatListItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Load chat room
+            loadChatRoom(roomId);
+            
+            // Update URL without page reload
+            history.pushState(null, '', `/inbox/?room=${roomId}`);
+        });
+    });
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        if (roomId) {
+            const chatItem = document.querySelector(`.chat-list-item[data-room-id="${roomId}"]`);
+            if (chatItem) {
+                chatItem.click();
+            }
+        } else {
+            chatRoomContainer.innerHTML = `
+                <div class="text-center p-5">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Select a chat to start messaging</h4>
+                </div>
+            `;
+        }
+    });
+    
+    // Check if there's a room ID in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room');
+    if (roomId) {
+        const chatItem = document.querySelector(`.chat-list-item[data-room-id="${roomId}"]`);
+        if (chatItem) {
+            chatItem.click();
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

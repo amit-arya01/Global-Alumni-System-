@@ -1,0 +1,173 @@
+{% extends 'alumni_app/base.html' %}
+{% block content %}
+<div class="container-fluid gallery-container" style="margin-top: 80px;">
+    <!-- Heading and Search Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Alumni Gallery</h2>
+            <div class="card search-form-card">
+                <div class="card-body">
+                    <form method="GET" action="{% url 'alumni_gallery' %}" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" name="search" class="form-control" placeholder="Search by name..." value="{{ request.GET.search }}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="profession" class="form-control" placeholder="Filter by profession..." value="{{ request.GET.profession }}">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="location" class="form-control" placeholder="Filter by location..." value="{{ request.GET.location }}">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alumni Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card search-form-card mb-4">
+                <div class="card-body">
+                    {% if alumni_list %}
+                    <div class="row">
+                        {% for alumni in alumni_list %}
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card alumni-card h-100 {% if alumni.is_connected %}connected-card{% else %}non-connected-card{% endif %}">
+                                <div class="card-body text-center">
+                                    {% if alumni.profile_pic %}
+                                    <img src="{{ alumni.profile_pic.url }}" class="rounded-circle mb-3 alumni-profile-pic" alt="Profile Picture">
+                                    {% else %}
+                                    <div class="rounded-circle bg-secondary mb-3 d-flex align-items-center justify-content-center alumni-profile-pic">
+                                        <span class="text-white">{{ alumni.first_name|first }}{{ alumni.last_name|first }}</span>
+                                    </div>
+                                    {% endif %}
+                                    <h5>{{ alumni.first_name }} {{ alumni.last_name }}</h5>
+                                    <p class="text-muted small">{{ alumni.profession }}</p>
+                                    <p class="small"><i class="fas fa-map-marker-alt me-1"></i>{{ alumni.location }}</p>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'view_alumni_profile' alumni.id %}" class="btn btn-sm btn-outline-primary">View Profile</a>
+                                        {% if alumni.is_connected %}
+                                        <a href="{% url 'inbox' %}?room={{ chat.room.id }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-comments"></i> Message
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No alumni found matching your search criteria.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gallery-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.alumni-profile-pic {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 0 auto;
+}
+
+/* Alumni Card Styles */
+.alumni-card {
+    transition: transform 0.2s;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+}
+
+.alumni-card:hover {
+    transform: translateY(-5px);
+}
+
+.connected-card {
+    border: 3px solid #28a745 !important;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.2) !important;
+}
+
+.non-connected-card {
+    border: 3px solid #6c757d !important;
+    box-shadow: 0 2px 10px rgba(108, 117, 125, 0.2) !important;
+}
+
+/* Search Form Card Styles */
+.search-form-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .gallery-container {
+        margin-top: 60px;
+        padding: 10px;
+    }
+
+    .alumni-profile-pic {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .form-control, .btn {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .gallery-container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .alumni-profile-pic {
+        width: 70px;
+        height: 70px;
+    }
+
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+</style>
+{% endblock %}

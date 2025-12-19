@@ -1,0 +1,97 @@
+{% extends 'alumni_app/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row " style="margin-top: 100px;">
+        <!-- Profile Card -->
+        <div class="col-md-4 ">
+            <div class="card h-100  ">
+                <div class="card-body text-center " >
+                    {% if profile_alumni.profile_pic %}
+                    <img src="{{ profile_alumni.profile_pic.url }}" class="rounded-circle mb-3" style="width: 200px; height: 200px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    {% else %}
+                    <div class="rounded-circle bg-light mb-3 mx-auto" style="width: 200px; height: 200px; line-height: 200px; border: 3px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <i class="fas fa-user fa-4x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <h3 class="mb-1">{{ profile_alumni.first_name }} {{ profile_alumni.last_name }}</h3>
+                    <p class="text-muted mb-3">{{ profile_alumni.profession }}</p>
+                    {% if request.session.alumni_id == profile_alumni.id %}
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary mb-3">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                    {% endif %}
+                    {% if request.session.alumni_id and request.session.alumni_id != profile_alumni.id %}
+                        <div class="d-flex justify-content-center gap-2">
+                            {% if profile_alumni.connection_status == 'pending' %}
+                                <button class="btn btn-secondary" disabled>Request Pending</button>
+                            {% elif profile_alumni.connection_status == 'accepted' %}
+                                <button class="btn btn-success" disabled>Connected</button>
+                                <a href="{% url 'start_chat' profile_alumni.id %}" class="btn btn-outline-success">
+                                    <i class="fas fa-comment"></i> Message
+                                </a>
+                            {% else %}
+                                <a href="{% url 'send_connection_request' profile_alumni.id %}" class="btn btn-primary">Connect</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Profile Information</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Education</h6>
+                            <p class="mb-0">{{ profile_alumni.degree }}</p>
+                            <small class="text-muted">Class of {{ profile_alumni.graduation_year }}</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Location</h6>
+                            <p class="mb-0">{{ profile_alumni.location }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Company</h6>
+                            <p class="mb-0">{{ profile_alumni.company|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Industry</h6>
+                            <p class="mb-0">{{ profile_alumni.industry }}</p>
+                        </div>
+                        {% if profile_alumni.bio %}
+                        <div class="col-12 mt-3">
+                            <h6 class="text-muted">About</h6>
+                            <p class="mb-0">{{ profile_alumni.bio }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+    background-color: rgba(197, 213, 191, 0.9);
+    backdrop-filter: blur(5px);
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+.btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+.text-muted {
+    color: #6c757d !important;
+}
+</style>
+{% endblock %} 

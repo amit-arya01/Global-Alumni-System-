@@ -1,0 +1,138 @@
+{% extends 'alumni_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ alumni.first_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ alumni.last_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="graduation_year" class="form-label">Graduation Year</label>
+                                <input type="number" class="form-control" id="graduation_year" name="graduation_year" value="{{ alumni.graduation_year }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="degree" class="form-label">Degree</label>
+                                <input type="text" class="form-control" id="degree" name="degree" value="{{ alumni.degree }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profession" class="form-label">Profession</label>
+                                <input type="text" class="form-control" id="profession" name="profession" value="{{ alumni.profession }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="company" class="form-label">Company</label>
+                                <input type="text" class="form-control" id="company" name="company" value="{{ alumni.company }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="industry" class="form-label">Industry</label>
+                                <input type="text" class="form-control" id="industry" name="industry" value="{{ alumni.industry }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" name="location" value="{{ alumni.location }}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3">{{ alumni.bio }}</textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="profile_pic" class="form-label">Profile Picture</label>
+                                {% if alumni.profile_pic %}
+                                    <div class="mb-2">
+                                        <img src="{{ alumni.profile_pic.url }}" alt="Current Profile Picture" class="img-thumbnail" style="max-width: 200px;">
+                                    </div>
+                                {% endif %}
+                                <input type="file" class="form-control" id="profile_pic" name="profile_pic">
+                                <small class="text-muted">Leave empty to keep current profile picture</small>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <a href="{% url 'view_alumni_profile' alumni.id %}" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+    background: linear-gradient(45deg, #e08345, #dc812c) !important;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #a56c2e, #ce9346);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #be8022, #db987d);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 80px;
+    }
+    
+    .card {
+        margin-bottom: 20px;
+    }
+}
+</style>
+{% endblock %} 

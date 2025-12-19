@@ -1,0 +1,638 @@
+{% extends 'alumni_app/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid dashboard-container" style="margin-top: 60px;">
+    <div class="row">
+        <!-- Left Sidebar - Profile & Quick Actions -->
+        <div class="col-12 col-md-4 col-lg-3 mb-4">
+            <!-- Profile Card -->
+            <div class="card profile-card">
+                <div class="card-body text-center">
+                    <div class="profile-pic-container mb-4">
+                        {% if alumni.profile_pic %}
+                        <img src="{{ alumni.profile_pic.url }}" class="profile-pic" alt="Profile Picture">
+                        {% else %}
+                        <div class="profile-pic-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ alumni.first_name }} {{ alumni.last_name }}</h4>
+                    <p class="text-muted mb-4">{{ alumni.profession }}</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'change_password' %}" class="btn btn-gradient-primary">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-gradient-primary">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </a>
+                        <a href="{% url 'feedback' %}" class="btn btn-gradient-success">
+                            <i class="fas fa-comment-alt me-2"></i>Submit Feedback
+                        </a>
+                        <div class="dropdown mt-2">
+                            <button class="btn btn-gradient-primary position-relative" type="button" id="unreadMessagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-envelope me-2"></i>Unread Messages
+                                {% if unread_messages_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ unread_messages_count }}
+                                </span>
+                                {% endif %}
+                            </button>
+                            <ul class="dropdown-menu w-100 p-0" aria-labelledby="unreadMessagesDropdown" style="max-height: 400px; overflow-y: auto;">
+                                {% if unread_messages %}
+                                    {% for message in unread_messages %}
+                                    <li>
+                                        <a class="dropdown-item message-item" href="{% url 'inbox' %}?room={{ message.chat_room.id }}">
+                                            {% if message.sender.profile_pic %}
+                                            <img src="{{ message.sender.profile_pic.url }}" class="message-pic" alt="Profile Picture">
+                                            {% else %}
+                                            <div class="message-pic-placeholder">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            {% endif %}
+                                            <div class="message-content">
+                                                <div class="message-header">
+                                                    <strong>{{ message.sender.first_name }} {{ message.sender.last_name }}</strong>
+                                                    <small class="text-muted">{{ message.timestamp|date:"H:i" }}</small>
+                                                </div>
+                                                <p class="message-text">{{ message.content }}</p>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    {% if not forloop.last %}
+                                    <li><hr class="dropdown-divider my-0"></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <li><hr class="dropdown-divider my-0"></li>
+                                    <li>
+                                        <a class="dropdown-item text-center py-2" href="{% url 'inbox' %}">
+                                            <i class="fas fa-inbox me-2"></i>View All Messages
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                            <p class="text-muted mb-0">No unread messages</p>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-12 col-md-8 col-lg-9">
+            <div class="row">
+                <!-- Connection Requests -->
+                {% if pending_requests %}
+                <div class="col-12 mb-4">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-gradient-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold">Connection Requests</h5>
+                                <span class="badge bg-primary rounded-pill">{{ pending_requests|length }}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                {% for request in pending_requests %}
+                                <div class="col-md-6">
+                                    <div class="connection-request-card">
+                                        {% if request.sender.profile_pic %}
+                                        <img src="{{ request.sender.profile_pic.url }}" class="connection-pic" alt="Profile Picture">
+                                        {% else %}
+                                        <div class="connection-pic-placeholder">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="connection-info">
+                                            <h6 class="mb-0 fw-bold">{{ request.sender.first_name }} {{ request.sender.last_name }}</h6>
+                                            <small class="text-muted">{{ request.sender.profession }}</small>
+                                        </div>
+                                        <div class="connection-actions">
+                                            <a href="{% url 'respond_connection_request' request.id 'accept' %}" class="btn btn-success btn-sm rounded-pill">
+                                                <i class="fas fa-check me-1"></i>Accept
+                                            </a>
+                                            <a href="{% url 'respond_connection_request' request.id 'reject' %}" class="btn btn-danger btn-sm rounded-pill">
+                                                <i class="fas fa-times me-1"></i>Reject
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Quick Stats and Upcoming Events Row -->
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title mb-4 fw-bold">Quick Stats</h6>
+                            <div class="stats-container">
+                                <div class="stat-item">
+                                    <div class="stat-icon bg-primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <span class="stat-label">Connections</span>
+                                        <span class="stat-value">{{ connected_alumni|length }}</span>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon bg-warning">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <span class="stat-label">Pending Requests</span>
+                                        <span class="stat-value">{{ pending_requests|length }}</span>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon bg-success">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <div class="stat-info">
+                                        <span class="stat-label">Upcoming Events</span>
+                                        <span class="stat-value">{{ total_upcoming_events }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-8 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-header bg-gradient-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold">Upcoming Events</h5>
+                                {% if total_upcoming_events > 2 %}
+                                <a href="{% url 'view_events' %}" class="btn btn-primary btn-sm rounded-pill">
+                                    <i class="fas fa-calendar-alt me-1"></i>View All
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if upcoming_events %}
+                            <div class="events-container">
+                                {% for event in upcoming_events %}
+                                <div class="event-card">
+                                    <div class="event-date">
+                                        <span class="month">{{ event.date|date:"M" }}</span>
+                                        <span class="day">{{ event.date|date:"d" }}</span>
+                                    </div>
+                                    <div class="event-details">
+                                        <h6 class="mb-2 fw-bold">{{ event.title }}</h6>
+                                        <p class="mb-2 small">{{ event.description }}</p>
+                                        <div class="event-meta">
+                                            <span><i class="fas fa-map-marker-alt me-2"></i>{{ event.location }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No upcoming events.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Connections and Recent Posts Row -->
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-header bg-gradient-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold">Recent Connections</h5>
+                                <a href="{% url 'browse_alumni' %}" class="btn btn-primary btn-sm rounded-pill">
+                                    <i class="fas fa-users me-1"></i>View All
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% if connected_alumni %}
+                            <div class="connections-grid">
+                                {% for connected in connected_alumni %}
+                                <div class="connection-card">
+                                    {% if connected.profile_pic %}
+                                    <img src="{{ connected.profile_pic.url }}" class="connection-pic" alt="Profile Picture">
+                                    {% else %}
+                                    <div class="connection-pic-placeholder">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="connection-info">
+                                        <h6 class="mb-0 fw-bold">{{ connected.first_name }} {{ connected.last_name }}</h6>
+                                        <small class="text-muted">{{ connected.profession }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">You haven't connected with any alumni yet.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-header bg-gradient-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 fw-bold">Recent Posts</h5>
+                                <a href="{% url 'view_posts' %}" class="btn btn-primary btn-sm rounded-pill">
+                                    <i class="fas fa-list me-1"></i>View All
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="create-post-section text-center">
+                                <a href="{% url 'create_post' %}" class="btn btn-gradient-primary rounded-pill mb-3">
+                                    <i class="fas fa-plus me-2"></i>Create New Post
+                                </a>
+                                <p class="text-muted">Share your thoughts and updates with the alumni community!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* General Styles */
+.dashboard-container {
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background-image: url("{% static 'img/wl.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+}
+
+.dashboard-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 0;
+}
+
+.dashboard-container > .row {
+    position: relative;
+    z-index: 1;
+}
+
+/* Card Styles */
+.dashboard-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    height: 100%;
+    background: rgba(231, 231, 231, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.profile-card {
+    background: rgba(231, 231, 231, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.stat-item {
+    background: rgba(231, 231, 231, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.event-card {
+    background: rgba(231, 231, 231, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.connection-card {
+    background: rgba(231, 231, 231, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin-top: 60px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .profile-pic-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .connections-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .event-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .event-date {
+        margin: 0 0 0.5rem 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .profile-pic-container {
+        width: 80px;
+        height: 80px;
+    }
+
+    .connections-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .stat-item {
+        padding: 0.5rem;
+    }
+
+    .stat-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* General Styles */
+.container-fluid {
+    background-color: #f8f9fa;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Profile Card Styles */
+.profile-pic-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+}
+
+.profile-pic, .profile-pic-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.profile-pic-placeholder {
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-pic-placeholder i {
+    font-size: 3rem;
+    color: #adb5bd;
+}
+
+/* Button Styles */
+.btn-gradient-primary {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-success {
+    background: linear-gradient(45deg, #1cc88a, #13855c);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-primary:hover, .btn-gradient-success:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+/* Stats Styles */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+.stat-icon i {
+    color: white;
+    font-size: 1rem;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.stat-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Event Card Styles */
+.events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.event-card {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.event-date {
+    background: #4e73df;
+    color: white;
+    padding: 0.4rem;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 50px;
+    margin-right: 0.75rem;
+}
+
+.event-date .month {
+    font-size: 0.75rem;
+}
+
+.event-date .day {
+    font-size: 1.2rem;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-meta {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Message Dropdown Styles */
+.dropdown-menu {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border: none;
+    z-index: 1050 !important;
+    min-width: 300px;
+    max-width: 400px;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    padding: 0;
+    transform: translateX(-50%) !important;
+    left: 50% !important;
+}
+
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 16px;
+    height: 16px;
+    background: white;
+    box-shadow: -2px -2px 5px rgba(0,0,0,0.05);
+    z-index: -1;
+}
+
+.message-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.message-item:last-child {
+    border-bottom: none;
+}
+
+.message-item:hover {
+    background-color: #f8f9fa;
+}
+
+.message-pic, .message-pic-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.message-text {
+    color: #6c757d;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.875rem;
+}
+
+/* Connection Card Styles */
+.connections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+}
+
+.connection-card {
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+.connection-pic, .connection-pic-placeholder {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 0.5rem;
+}
+
+.connection-pic-placeholder {
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Create Post Section */
+.create-post-section {
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}  

@@ -1,0 +1,227 @@
+{% extends 'alumni_app/base.html' %}
+{% block content %}
+<style>
+    .register-container {
+        margin: 10io0px 0;
+    }
+    .register-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    .register-card:hover {
+        transform: translateY(-5px);
+    }
+    .card-header {
+        background-color: var(--primary-color) !important;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 119, 0, 0.25);
+    }
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+    .btn-primary:hover {
+        background-color: #e66a00;
+        border-color: #e66a00;
+    }
+    .form-label {
+        font-weight: 500;
+        color: var(--secondary-color);
+    }
+    .register-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .register-link:hover {
+        text-decoration: underline;
+    }
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 12px 20px;
+        font-weight: 500;
+    }
+    .alert-danger {
+        background-color: #fff3f3;
+        border-color: #ffcdd2;
+        color: #d32f2f;
+    }
+    .alert-success {
+        background-color: #f1f8e9;
+        border-color: #dcedc8;
+        color: #2e7d32;
+    }
+    .form-error {
+        color: #d32f2f;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    @media (max-width: 768px) {
+        .register-container {
+            padding: 20px 0;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="register-container" style="margin-top: 120px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="register-card">
+                    <div class="card-header text-white">
+                        <h4 class="mb-0">Alumni Registration</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" enctype="multipart/form-data" id="registrationForm">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="username" name="username" required>
+                                    {% if form.username.errors %}
+                                        <div class="form-error">{{ form.username.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" required>
+                                    {% if form.email.errors %}
+                                        <div class="form-error">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="password" name="password" required>
+                                    {% if form.password.errors %}
+                                        <div class="form-error">{{ form.password.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control {% if form.confirm_password.errors %}is-invalid{% endif %}" id="confirm_password" name="confirm_password" required>
+                                    {% if form.confirm_password.errors %}
+                                        <div class="form-error">{{ form.confirm_password.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="first_name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" name="first_name" required>
+                                    {% if form.first_name.errors %}
+                                        <div class="form-error">{{ form.first_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="last_name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" name="last_name" required>
+                                    {% if form.last_name.errors %}
+                                        <div class="form-error">{{ form.last_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="graduation_year" class="form-label">Graduation Year</label>
+                                    <input type="number" class="form-control {% if form.graduation_year.errors %}is-invalid{% endif %}" id="graduation_year" name="graduation_year" required>
+                                    {% if form.graduation_year.errors %}
+                                        <div class="form-error">{{ form.graduation_year.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="degree" class="form-label">Degree</label>
+                                    <input type="text" class="form-control {% if form.degree.errors %}is-invalid{% endif %}" id="degree" name="degree" required>
+                                    {% if form.degree.errors %}
+                                        <div class="form-error">{{ form.degree.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="profession" class="form-label">Profession</label>
+                                    <input type="text" class="form-control {% if form.profession.errors %}is-invalid{% endif %}" id="profession" name="profession" required>
+                                    {% if form.profession.errors %}
+                                        <div class="form-error">{{ form.profession.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="company" class="form-label">Company</label>
+                                    <input type="text" class="form-control {% if form.company.errors %}is-invalid{% endif %}" id="company" name="company">
+                                    {% if form.company.errors %}
+                                        <div class="form-error">{{ form.company.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="industry" class="form-label">Industry</label>
+                                    <input type="text" class="form-control {% if form.industry.errors %}is-invalid{% endif %}" id="industry" name="industry" required>
+                                    {% if form.industry.errors %}
+                                        <div class="form-error">{{ form.industry.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}" id="location" name="location" required>
+                                    {% if form.location.errors %}
+                                        <div class="form-error">{{ form.location.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label for="bio" class="form-label">Bio</label>
+                                    <textarea class="form-control {% if form.bio.errors %}is-invalid{% endif %}" id="bio" name="bio" rows="3"></textarea>
+                                    {% if form.bio.errors %}
+                                        <div class="form-error">{{ form.bio.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <label for="profile_pic" class="form-label">Profile Picture</label>
+                                    <input type="file" class="form-control {% if form.profile_pic.errors %}is-invalid{% endif %}" id="profile_pic" name="profile_pic">
+                                    {% if form.profile_pic.errors %}
+                                        <div class="form-error">{{ form.profile_pic.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <div class="g-recaptcha mb-3" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                                    {% if form.recaptcha.errors %}
+                                        <div class="form-error">{{ form.recaptcha.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Register</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="mt-4 text-center">
+                            <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="register-link">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    var response = grecaptcha.getResponse();
+    if (!response) {
+        e.preventDefault();
+        alert('Please complete the reCAPTCHA verification.');
+    }
+});
+</script>
+{% endblock %}

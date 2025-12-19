@@ -1,0 +1,39 @@
+{% extends 'alumni_app/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header  text-white" style="background-color: rgb(233, 175, 88);">
+                    <h4 class="mb-0">Edit Event</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Event Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ event.title }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required>{{ event.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date and Time</label>
+                            <input type="datetime-local" class="form-control" id="date" name="date" value="{{ event.date|date:'Y-m-d\TH:i' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" value="{{ event.location }}" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn" style="background-color: rgb(233, 175, 88);">Update Event</button>
+                            <a href="{% url 'admin_events' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

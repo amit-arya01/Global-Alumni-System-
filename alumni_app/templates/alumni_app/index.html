@@ -1,0 +1,143 @@
+{% extends 'alumni_app/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: left ;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        text-align: center;
+        
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 30px;
+        font-weight: 500;
+    }
+
+    .btn-primary:hover {
+        background-color: #e66a00;
+        border-color: #e66a00;
+    }
+
+    .services-section {
+        padding: 80px 0;
+        background-color: #f8f9fa;
+    }
+
+    .service-card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .service-card h4 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+
+    .about-section {
+        padding: 80px 0;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("{% static 'img/wl.jpg' %}");
+        background-size: cover;
+        opacity: 0.9;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+    }
+
+    .about-content {
+        padding: 30px;
+    }
+
+    .about-content h2 {
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .about-content p {
+        color: rgba(255, 255, 255, 0.9);
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section" id="home">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Global Alumni Connect</h1>
+            <h5>A Platform for Alumni Networking and Growth</h5>
+            <p>Connect with fellow alumni, share experiences, and grow your professional network</p>
+            <a href="#about" class="btn btn-primary btn-lg">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section" id="services" >
+    <div class="container">
+        <h2 class="text-center mb-5">Our Services</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="service-card">
+                    <h4>Connect with Alumni</h4>
+                    <p>Build your professional network by connecting with fellow alumni from around the world.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card">
+                    <h4>Career Updates</h4>
+                    <p>Share your career progress and achievements with the alumni community.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card">
+                    <h4>Events & Meetups</h4>
+                    <p>Stay updated with alumni events and networking opportunities.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section" id="about">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="about-content">
+                    <h2>About Our Platform</h2>
+                    <p>Welcome to Global Alumni Connect, a dedicated platform for alumni networking and professional growth. Our mission is to foster meaningful connections between alumni and create opportunities for collaboration and development.</p>
+                    <p>Whether you're looking to expand your professional network, share your experiences, or stay connected with your alma mater, our platform provides the tools and resources you need.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'img/ab.jpg' %}" alt="About Us" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

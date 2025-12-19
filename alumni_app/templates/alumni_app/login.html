@@ -1,0 +1,114 @@
+{% extends 'alumni_app/base.html' %}
+{% block content %}
+<style>
+    .login-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        margin: 100px 0;
+    }
+    .login-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    .login-card:hover {
+        transform: translateY(-5px);
+    }
+    .card-header {
+        background-color: var(--primary-color) !important;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 119, 0, 0.25);
+    }
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+    .btn-primary:hover {
+        background-color: #e66a00;
+        border-color: #e66a00;
+    }
+    .form-label {
+        font-weight: 500;
+        color: var(--secondary-color);
+    }
+    .login-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .login-link:hover {
+        text-decoration: underline;
+    }
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 12px 20px;
+        font-weight: 500;
+    }
+    .alert-danger {
+        background-color: #fff3f3;
+        border-color: #ffcdd2;
+        color: #d32f2f;
+    }
+    .alert-success {
+        background-color: #f1f8e9;
+        border-color: #dcedc8;
+        color: #2e7d32;
+    }
+</style>
+
+<div class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="login-card">
+                    <div class="card-header text-white">
+                        <h4 class="mb-0">Login</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="user_type" class="form-label">I am a:</label>
+                                <select class="form-select" id="user_type" name="user_type" required>
+                                    <option value="alumni">Alumni</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                        <div class="mt-4 text-center">
+                            <p class="mb-0">Don't have an account? <a href="{% url 'register' %}" class="login-link">Register here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
