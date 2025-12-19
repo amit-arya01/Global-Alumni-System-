@@ -27,6 +27,7 @@ This project is suitable for **college/final-year projects** as well as for show
 * View events and announcements
 * View job and career opportunities
 * Connect with other alumni
+* Alumni chat system
 
 ### 🏫 Admin Module
 
@@ -66,66 +67,7 @@ This project is suitable for **college/final-year projects** as well as for show
 
 ---
 
-## ⚙️ Installation & Setup
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/your-username/global-alumni-system.git
-```
-
-2. **Navigate to the project directory**
-
-```bash
-cd global-alumni-system
-```
-
-3. **Create a virtual environment**
-
-```bash
-python -m venv venv
-```
-
-4. **Activate virtual environment**
-
-* Windows:
-
-```bash
-venv\\Scripts\\activate
-```
-
-* Linux/Mac:
-
-```bash
-source venv/bin/activate
-```
-
-5. **Install dependencies**
-
-```bash
-pip install -r requirements.txt
-```
-
-6. **Apply migrations**
-
-```bash
-python manage.py migrate
-```
-
-7. **Run the server**
-
-```bash
-python manage.py runserver
-```
-
-8. Open browser and visit:
-
-```
-http://127.0.0.1:8000/
-```
-
----
-
+#
 ## 📂 Project Structure (Simplified)
 
 ```
@@ -149,7 +91,7 @@ GlobalAlumniSystem/
 
 ## 📈 Future Enhancements
 
-* Alumni chat system
+
 * Email notifications
 * Analytics dashboard
 * Mobile application
@@ -173,11 +115,4 @@ This project is ideal for:
 MCA Graduate | Python & Django Developer
 
 ---
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
 ⭐ If you like this project, feel free to **star the repository** and contribute!
